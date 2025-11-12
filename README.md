@@ -263,20 +263,50 @@ figma-claude-mcp-template/
 2. **Figma Plugin**: Submit to Figma Community
 3. **Documentation**: Comprehensive setup guide
 
-### Installation for End Users (Future)
+### Installation Steps
+
 ```bash
-# Clone template
+# 1. Clone the template
 git clone https://github.com/bradleyzaia/figma-claude-mcp-template.git
 cd figma-claude-mcp-template
 
-# Install and build
+# 2. Install dependencies
 npm install
-npm run build
 
-# Add to Claude Desktop config
+# 3. Build the project
+npm run build
 ```
 
-**Current Installation**: Manual setup required.
+**4. Configure Claude Desktop**
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "figma-mcp-server": {
+      "command": "node",
+      "args": ["/absolute/path/to/figma-claude-mcp-template/build/index.js"]
+    }
+  }
+}
+```
+
+Replace `/absolute/path/to/` with your actual project path.
+
+**5. Install Figma Plugin**
+
+1. Open Figma Desktop
+2. Go to **Plugins** → **Development** → **Import plugin from manifest**
+3. Select `figma-plugin/manifest.json` from your project directory
+4. Run the plugin and click **Connect**
+
+**6. Test the Connection**
+
+1. Restart Claude Desktop (to load the new MCP config)
+2. Open the Figma plugin and click "Connect"
+3. Ask Claude Desktop: "Use the ping tool to test the Figma connection"
+4. You should see a successful round-trip response!
 
 
 ---
