@@ -5,6 +5,27 @@
 
 This repository implements a **Model Context Protocol (MCP) server** that bridges **Claude Desktop** and **Figma**, enabling AI-powered design automation and interaction through a WebSocket-connected Figma plugin.
 
+### Current Status
+
+**Development Phase**: Pre-Alpha (v0.1.0)
+
+**Implemented**:
+- ✓ Basic MCP server architecture with dual transport (stdio + WebSocket)
+- ✓ Figma plugin skeleton with WebSocket connectivity
+- ✓ Project structure and build system
+
+**In Progress**:
+- 🔄 Core Figma interaction tools (see [docs/executionplan.md](docs/executionplan.md))
+
+**Planned**:
+- ⏳ Selection & navigation tools (Phase 1)
+- ⏳ Node scanning & property reading (Phase 2)
+- ⏳ Text operations (Phase 3)
+- ⏳ Node property modification (Phase 4)
+- ⏳ Event listeners & real-time sync (Phase 5)
+
+For detailed implementation plans, see [docs/executionplan.md](docs/executionplan.md).
+
 ---
 
 ## Architecture Overview
@@ -71,7 +92,7 @@ httpServer.listen(3000);
 ```typescript
 const server = new Server({
   name: "figma-mcp-server",
-  version: "1.0.0"
+  version: "0.1.0"
 }, {
   capabilities: {
     tools: {}  // Tool calling enabled
@@ -177,7 +198,7 @@ main           ─── Initial release
 ## File Structure
 
 ```
-text-asset-mcp2/
+figma-claude-text-asset-manager/
 ├── src/
 │   └── index.ts                 # MCP server source (TypeScript)
 ├── build/
@@ -188,7 +209,7 @@ text-asset-mcp2/
 │   ├── code.js                  # Plugin backend (Figma API)
 │   └── ui.html                  # Plugin UI (WebSocket client)
 ├── docs/
-│   ├── EXECUTION_PLAN.md        # This file
+│   ├── executionplan.md         # Feature implementation roadmap
 │   ├── FIGMA_API_REFERENCE.md   # Figma API function reference
 │   ├── TESTING.md               # Testing guide
 │   └── SETUP_COMPLETE.md        # Setup instructions
@@ -232,12 +253,15 @@ text-asset-mcp2/
 2. Install Figma plugin manually
 3. Claude Desktop uses local config
 
-### Distribution
+### Distribution (Planned)
+
+> **Note**: These features are planned for future releases (v1.0.0+)
+
 1. **NPM Package**: Publish as `@username/figma-mcp-server`
 2. **Figma Plugin**: Submit to Figma Community
 3. **Documentation**: Comprehensive setup guide
 
-### Installation for End Users
+### Installation for End Users (Future)
 ```bash
 # Install MCP server
 npx @username/figma-mcp-server init
@@ -245,6 +269,8 @@ npx @username/figma-mcp-server init
 # Installs to user directory
 # Adds to Claude Desktop config automatically
 ```
+
+**Current Installation**: Manual setup required. See [docs/SETUP_COMPLETE.md](docs/SETUP_COMPLETE.md) for instructions.
 
 
 ---

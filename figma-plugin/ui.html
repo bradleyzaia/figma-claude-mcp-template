@@ -167,6 +167,12 @@
           if (data.type === 'welcome') {
             console.log('Welcome message:', data.message);
           }
+
+          // Forward tool requests from MCP server to plugin code
+          if (data.type === 'tool_request') {
+            console.log('Tool request from MCP:', data.tool);
+            parent.postMessage({ pluginMessage: data }, '*');
+          }
         };
 
         ws.onerror = (error) => {
@@ -232,6 +238,16 @@
 
       if (msg.type === 'start-disconnection') {
         disconnectFromMCP();
+      }
+
+      // Forward tool responses from plugin code to MCP server
+      if (msg.type === 'tool_response') {
+        if (ws && isConnected) {
+          console.log('Forwarding tool response to MCP:', msg.id);
+          ws.send(JSON.stringify(msg));
+        } else {
+          console.error('Cannot send tool response: not connected to MCP server');
+        }
       }
     };
 
