@@ -1,0 +1,12 @@
+{
+  "name": "Figma MCP Client",
+  "id": "figma-mcp-client",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "This plugin connects to a local MCP server on localhost for development and testing purposes"
+  }
+}

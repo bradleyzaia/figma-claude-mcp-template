@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Figma MCP Client</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      padding: 16px;
+      background: #ffffff;
+    }
+
+    h1 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #000000;
+    }
+
+    .status-container {
+      background: #f5f5f5;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .status-label {
+      font-size: 11px;
+      color: #666666;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-value {
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-indicator.disconnected {
+      background-color: #999999;
+    }
+
+    .status-indicator.connecting {
+      background-color: #ffaa00;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .status-indicator.connected {
+      background-color: #00cc66;
+    }
+
+    .status-indicator.error {
+      background-color: #ff3366;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    button {
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #18a0fb;
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #1590e8;
+    }
+
+    button:active {
+      background: #0d7dc9;
+    }
+
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .info-text {
+      font-size: 11px;
+      color: #666666;
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <h1>MCP Server Connection</h1>
+
+  <div class="status-container">
+    <div class="status-label">Status</div>
+    <div class="status-value">
+      <span class="status-indicator disconnected" id="status-indicator"></span>
+      <span id="status-text">Disconnected</span>
+    </div>
+  </div>
+
+  <button id="connect-btn">Connect to MCP Server</button>
+
+  <div class="info-text">
+    This plugin connects to a local MCP server running on your machine.
+  </div>
+
+  <script>
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('status-text');
+    const connectBtn = document.getElementById('connect-btn');
+
+    const WS_URL = 'ws://localhost:3000';
+    let ws = null;
+    let isConnected = false;
+
+    // Update status display
+    function updateStatus(status, text) {
+      statusIndicator.className = `status-indicator ${status}`;
+      statusText.textContent = text;
+    }
+
+    // Connect to MCP server via WebSocket
+    function connectToMCP() {
+      updateStatus('connecting', 'Connecting...');
+      connectBtn.disabled = true;
+
+      try {
+        ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+          console.log('WebSocket connected');
+          isConnected = true;
+          updateStatus('connected', 'Connected');
+          connectBtn.textContent = 'Disconnect';
+          connectBtn.disabled = false;
+
+          // Send ping to confirm connection
+          ws.send(JSON.stringify({ type: 'ping', from: 'figma-plugin' }));
+        };
+
+        ws.onmessage = (event) => {
+          console.log('Received:', event.data);
+          const data = JSON.parse(event.data);
+
+          if (data.type === 'welcome') {
+            console.log('Welcome message:', data.message);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          updateStatus('error', 'Connection error');
+          connectBtn.disabled = false;
+          connectBtn.textContent = 'Retry Connection';
+          isConnected = false;
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket disconnected');
+          if (isConnected) {
+            updateStatus('disconnected', 'Disconnected');
+            connectBtn.textContent = 'Connect to MCP Server';
+            connectBtn.disabled = false;
+          }
+          isConnected = false;
+          ws = null;
+        };
+
+      } catch (error) {
+        console.error('Failed to connect:', error);
+        updateStatus('error', 'Failed to connect');
+        connectBtn.disabled = false;
+        connectBtn.textContent = 'Retry Connection';
+      }
+    }
+
+    // Disconnect from MCP server
+    function disconnectFromMCP() {
+      if (ws && isConnected) {
+        ws.close();
+        updateStatus('disconnected', 'Disconnected');
+        connectBtn.textContent = 'Connect to MCP Server';
+        isConnected = false;
+      }
+    }
+
+    // Handle connect/disconnect button click
+    connectBtn.addEventListener('click', () => {
+      if (isConnected) {
+        disconnectFromMCP();
+      } else {
+        connectToMCP();
+      }
+    });
+
+    // Listen for messages from the plugin code
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage;
+
+      if (msg.type === 'connection-status') {
+        if (msg.status === 'ready') {
+          updateStatus('disconnected', 'Ready to connect');
+          connectBtn.disabled = false;
+        }
+      }
+
+      if (msg.type === 'start-connection') {
+        connectToMCP();
+      }
+
+      if (msg.type === 'start-disconnection') {
+        disconnectFromMCP();
+      }
+    };
+
+    // Initial status check
+    parent.postMessage({ pluginMessage: { type: 'check-connection' } }, '*');
+  </script>
+</body>
+</html>
