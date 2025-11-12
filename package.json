@@ -1,11 +1,15 @@
 {
-  "name": "figma-mcp-server",
-  "version": "1.0.0",
-  "description": "MCP server for Figma integration",
+  "name": "figma-claude-mcp-template",
+  "version": "0.1.0",
+  "description": "MCP server template for Figma and Claude Desktop integration",
   "type": "module",
   "main": "build/index.js",
   "bin": {
     "figma-mcp-server": "build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bradleyzaia/figma-claude-mcp-template.git"
   },
   "scripts": {
     "build": "tsc",
@@ -13,8 +17,8 @@
     "start": "node build/index.js --websocket",
     "start:stdio": "node build/index.js"
   },
-  "keywords": ["mcp", "figma", "server"],
-  "author": "",
+  "keywords": ["mcp", "figma", "claude", "template", "server"],
+  "author": "Bradley Zaia",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",

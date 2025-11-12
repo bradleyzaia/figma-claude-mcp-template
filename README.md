@@ -1,9 +1,8 @@
-# Figma/Claude MCP Server Template
-# Technical Scope
+# Figma Claude MCP Template
 
 ## Project Overview
 
-This repository implements a **Model Context Protocol (MCP) server** that bridges **Claude Desktop** and **Figma**, enabling AI-powered design automation and interaction through a WebSocket-connected Figma plugin.
+This repository provides a **Model Context Protocol (MCP) server template** that bridges **Claude Desktop** and **Figma**, enabling AI-powered design automation and interaction through a WebSocket-connected Figma plugin.
 
 ### Current Status
 
@@ -179,26 +178,32 @@ npm run dev
    - Ask Claude to use figma-mcp-server tools
    - Server runs in stdio mode automatically
 
-### Git Workflow
+### Claude Desktop Configuration
 
+Add to your `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "figma-mcp-server": {
+      "command": "node",
+      "args": ["/path/to/figma-claude-mcp-template/build/index.js"]
+    }
+  }
+}
 ```
-main           ─── Initial release
-  │
-  ├─ develop   ─── Integration branch
-  │   │
-  │   ├─ figma-functions  ─── Feature branch (current)
-  │   │
-  │   └─ other-features
-  │
-  └─ ...
-```
+
+**Important**:
+- Replace `/path/to/` with your actual path
+- Restart Claude Desktop after config changes
+- Don't run `npm start` manually - Claude Desktop manages the server
 
 ---
 
 ## File Structure
 
 ```
-figma-claude-text-asset-manager/
+figma-claude-mcp-template/
 ├── src/
 │   └── index.ts                 # MCP server source (TypeScript)
 ├── build/
@@ -209,10 +214,7 @@ figma-claude-text-asset-manager/
 │   ├── code.js                  # Plugin backend (Figma API)
 │   └── ui.html                  # Plugin UI (WebSocket client)
 ├── docs/
-│   ├── executionplan.md         # Feature implementation roadmap
-│   ├── FIGMA_API_REFERENCE.md   # Figma API function reference
-│   ├── TESTING.md               # Testing guide
-│   └── SETUP_COMPLETE.md        # Setup instructions
+│   └── executionplan.md         # Feature implementation roadmap
 ├── package.json                 # Dependencies & scripts
 ├── tsconfig.json                # TypeScript configuration
 ├── .gitignore                   # Git ignore rules
@@ -257,20 +259,24 @@ figma-claude-text-asset-manager/
 
 > **Note**: These features are planned for future releases (v1.0.0+)
 
-1. **NPM Package**: Publish as `@username/figma-mcp-server`
+1. **NPM Package**: Publish as `figma-claude-mcp-template`
 2. **Figma Plugin**: Submit to Figma Community
 3. **Documentation**: Comprehensive setup guide
 
 ### Installation for End Users (Future)
 ```bash
-# Install MCP server
-npx @username/figma-mcp-server init
+# Clone template
+git clone https://github.com/bradleyzaia/figma-claude-mcp-template.git
+cd figma-claude-mcp-template
 
-# Installs to user directory
-# Adds to Claude Desktop config automatically
+# Install and build
+npm install
+npm run build
+
+# Add to Claude Desktop config
 ```
 
-**Current Installation**: Manual setup required. See [docs/SETUP_COMPLETE.md](docs/SETUP_COMPLETE.md) for instructions.
+**Current Installation**: Manual setup required.
 
 
 ---
@@ -285,18 +291,23 @@ npx @username/figma-mcp-server init
 
 ---
 
-## Contact & Contribution
+## Contributing
 
-This is an open-source project. Contributions welcome!
+This is an open-source template project. Contributions welcome!
 
 **Getting Started**:
-1. Fork the repository
-2. Create feature branch from `develop`
-3. Implement changes with tests
+1. Fork the repository at [github.com/bradleyzaia/figma-claude-mcp-template](https://github.com/bradleyzaia/figma-claude-mcp-template)
+2. Create feature branch from `main`
+3. Implement changes following the code style below
 4. Submit pull request
 
 **Code Style**:
 - TypeScript with strict mode
-- ESLint + Prettier
 - Conventional commits
 - Comprehensive JSDoc comments
+
+---
+
+## License
+
+MIT License - Feel free to use this template for your own projects!
